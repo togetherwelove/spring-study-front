@@ -1,23 +1,35 @@
 <script setup>
-import { RouteRecordRaw, userRouter } from "vue-router";
-const routes = userRouter()
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/authService";
+const routes = useRouter()
   .getRoutes()
   .filter((r) => r.name === "default")[0]?.children;
+
+const authStore = useAuthStore();
+const logout = () => {
+  authStore.logout();
+};
+
+const drawer = ref(false);
 </script>
 
 <template>
-  <v-navigation-drawer>
-    <v-list>
-      <v-list-item v-for="route in routes" :key="route.name" :to="route" density="compact" :title="t(route.name?.toString() ?? '')"> </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
   <v-app>
-    <v-app-bar> Hello World! </v-app-bar>
+    <v-navigation-drawer v-model="drawer" width="175">
+      <v-sheet class="ma-3">
+        <v-btn @click="logout">logout</v-btn>
+      </v-sheet>
+      <v-list>
+        <v-list-item v-for="route in routes" :key="route.path" :to="route" density="compact" :title="route.name"> </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <v-app-bar>
+      <v-btn color="primary" icon @click.stop="drawer = !drawer"><v-icon>mdi-menu</v-icon></v-btn>
+      Hello World!
+    </v-app-bar>
     <v-main>
-      <router-view></router-view>
+      <router-view class="ma-5"></router-view>
     </v-main>
-    <v-footer>
-      <div>{{ new Date().getFullYear() }} — <strong>Project : Spring Demo</strong></div>
-    </v-footer>
   </v-app>
 </template>
