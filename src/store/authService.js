@@ -8,7 +8,6 @@ export const useAuthStore = defineStore({
       user: "",
       token: "",
       returnUrl: "/",
-      isLogin: false,
     };
   },
   actions: {
@@ -18,11 +17,12 @@ export const useAuthStore = defineStore({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
       });
-      if (response.status == 200) {
+      if (response.status === 200) {
         const data = await response.json();
         this.token = data.accessToken;
-        this.isLogin = true;
         await router.push(this.returnUrl || "/");
+      } else if (response.status === 403) {
+        await router.push({ name: "login", query: { error: 1 } });
       }
     },
 
@@ -53,8 +53,7 @@ export const useAuthStore = defineStore({
       if (response.status === 200) {
         this.token = "";
         this.user = "";
-        this.isLogin = false;
-        await router.push("/auth/login");
+        await router.push(this.returnUrl || "/login");
       }
     },
   },

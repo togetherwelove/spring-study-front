@@ -7,7 +7,9 @@ const routes = useRouter()
   .filter((r) => r.name === "default")[0]?.children;
 
 const authStore = useAuthStore();
+
 const logout = () => {
+  console.log("logout...");
   authStore.logout();
 };
 

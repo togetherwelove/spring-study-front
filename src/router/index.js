@@ -30,15 +30,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
-  if (auth.isLogin) {
+  if (auth.token === "") {
     await auth.refresh();
   }
-  if (to.meta.authRequired && !auth.isLogin) {
+  if (to.meta.authRequired && auth.token === "") {
     next({ name: "login" });
+    return;
   }
   next();
-  // TODO
-  // [Vue Router warn]: The "next" callback was called more than once in one navigation guard when going from "/" to "/home". It should be called exactly one time in each navigation guard. This will fail in production.
 });
 
 export default router;
