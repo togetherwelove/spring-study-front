@@ -19,7 +19,10 @@ const routes = [
     name: "auth",
     path: "/auth",
     component: Auth,
-    children: [{ name: "login", path: "/auth/login", component: () => import("@/views/auth/Login.vue"), meta: { authRequired: false } }],
+    children: [
+      { name: "login", path: "/auth/login", component: () => import("@/views/auth/Login.vue"), meta: { authRequired: false } },
+      { name: "signup", path: "/auth/signup", component: () => import("@/views/auth/Signup.vue"), meta: { authRequired: false } },
+    ],
   },
 ];
 
