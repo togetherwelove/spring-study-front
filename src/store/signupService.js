@@ -11,7 +11,7 @@ export const useSignupStore = defineStore({
   },
   actions: {
     async check(user) {
-      const response = await fetch("/api/signup/check", {
+      const response = await fetch("/api/auth/signup/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),

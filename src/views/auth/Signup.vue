@@ -1,68 +1,92 @@
 <script setup>
 import { useSignupStore } from "@/store/signupService";
 import rules from "@/plugins/rules";
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 const useSignupSerivce = useSignupStore();
 const loading = ref(false);
-
-const user = reactive({
+const signupRequest = reactive({
   name: "",
   email: "",
   password: "",
   passwordVerify: "",
 });
 
-async function signup(event) {
-  loading.value = true;
-  const result = await event;
-  const errors = await result.errors;
-  if (errors?.length === 0) {
-    useSignupSerivce.check(user);
-  }
-  loading.value = false;
-}
+let step = ref(1);
 
-const passwordVerifyRule = [
+const title = computed(() => {
+  switch (step.value) {
+    case 1:
+      return "회원가입";
+    case 2:
+      return "홈으로";
+  }
+});
+
+const signup = function () {
+  loading.value = true;
+  // TODO
+  useSignupStore.check(signupRequest);
+};
+
+const passwordVerifyRules = computed(() => [
   (value) => {
-    if (value) return true;
-    return "비밀번호를 입력해주세요.";
-  },
-  (value) => {
-    if (value === user.password) return true;
+    if (value === signup.password) return true;
     return "비밀번호가 일치하지 않습니다.";
   },
-];
+]);
+
+let emailVerify = ref(false);
+
+const sendEmail = () => {
+  console.log("send Email");
+  emailVerify.value = true;
+};
 </script>
 
 <template>
-  <div class="d-flex align-center justify-center" style="height: 100%">
-    <v-sheet width="550">
-      <h2>회원가입</h2>
-      <v-form class="mt-2" validate-on="input lazy" @submit.prevent="signup">
-        <v-text-field density="compact" variant="outlined" v-model="user.name" :rules="rules.name" label="이름"></v-text-field>
-        <v-text-field class="mt-3" density="compact" variant="outlined" v-model="user.email" :rules="rules.email" label="이메일 (아이디)"></v-text-field>
-        <v-row class="mt-2">
-          <v-col>
-            <v-text-field
-              density="compact"
-              type="password"
-              variant="outlined"
-              v-model="user.password"
-              :rules="rules.password"
-              hint="8자 이상, 최소 1개의 대문자, 1개의 소문자, 숫자 포함, 특수 문자 포함 가능"
-              label="비밀번호"
-              autocomplete="none"
-            ></v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field density="compact" type="password" variant="outlined" v-model="user.passwordVerify" :rules="passwordVerifyRule" label="비밀번호 (확인)" autocomplete="none"></v-text-field>
-          </v-col>
-        </v-row>
-        <v-btn class="mt-2" type="submit" :loading="loading" color="primary" block>회원가입</v-btn>
-        <div class="mt-2">
-          <p class="text-body-2">이미 가입되어 있는 경우 <a href="/auth/login">로그인</a>해주세요.</p>
-        </div>
-      </v-form>
-    </v-sheet>
-  </div>
+  <v-app>
+    <div class="d-flex align-center justify-center" style="height: 100%">
+      <v-card class="mx-auto" width="100%" max-width="440">
+        <v-card-title class="title font-weight-regular d-flex justify-space-between">
+          <div>
+            <span><strong>회원가입</strong></span>
+            <p class="text-body-2">이미 계정이 있다면 <a href="/auth/login">로그인</a>해주세요.</p>
+          </div>
+        </v-card-title>
+
+        <v-window v-model="step">
+          <v-window-item :value="1">
+            <v-card-text>
+              <v-form validate-on="input lazy">
+                <v-text-field density="compact" v-model="signupRequest.name" label="이름" :rules="rules.name"></v-text-field>
+                <v-text-field density="compact" v-model="signupRequest.email" label="이메일" :rules="rules.email" :append-icon="emailVerify ? 'mdi-check' : 'mdi-check-circle'" @click:append="sendEmail"></v-text-field>
+                <v-row>
+                  <v-col>
+                    <v-text-field density="compact" type="password" v-model="signupRequest.password" label="비밀번호" :rules="rules.password" autocomplete="off"></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-text-field density="compact" type="password" v-model="signupRequest.passwordVerify" label="비밀번호(확인)" :rules="passwordVerifyRules" autocomplete="off"></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item :value="2">
+            <v-card-text class="text-center">
+              <v-icon icon="mdi-check-circle" color="success" size="128"></v-icon>
+              <h3 class="title font-weight-bold mb-2">회원가입을 축하드립니다.</h3>
+            </v-card-text>
+          </v-window-item>
+        </v-window>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" :loading="loading" @click="signup">{{ title }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
+  </v-app>
 </template>

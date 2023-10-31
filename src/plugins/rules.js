@@ -1,7 +1,7 @@
 const patterns = {
   email: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
-  password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-  name: /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/,
+  password: /^(?=.*\d)(?=.*[a-z])[a-z\d!@#$%^&*]{8,}$/,
+  name: /^[가-힣a-zA-Z]{2,29}$/,
 };
 
 const rules = {
@@ -12,7 +12,7 @@ const rules = {
     },
     (value) => {
       if (patterns.email.test(value)) return true;
-      return "유효한 이메일 형식이 아닙니다.";
+      return "이메일이 유효하지 않습니다.";
     },
   ],
   password: [
@@ -26,7 +26,7 @@ const rules = {
     },
     (value) => {
       if (patterns.password.test(value)) return true;
-      return "유효한 비밀번호 형식이 아닙니다.";
+      return "비밀번호가 유효하지 않습니다.";
     },
   ],
   name: [
@@ -35,8 +35,12 @@ const rules = {
       return "이름을 입력해주세요.";
     },
     (value) => {
+      if (value.length >= 2) return true;
+      return "이름은 2자 이상입니다.";
+    },
+    (value) => {
       if (patterns.name.test(value)) return true;
-      return "유효한 이름 형식이 아닙니다.";
+      return "이름이 유효하지 않습니다.";
     },
   ],
 };
