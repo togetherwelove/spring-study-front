@@ -10,8 +10,19 @@ export const useSignupStore = defineStore({
     };
   },
   actions: {
-    async check(user) {
-      const response = await fetch("/api/auth/signup/check", {
+    async checkRequired(user) {
+      const response = await fetch("/api/auth/signup/checkRequired", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+      if (response.status === 200) {
+        alert("checked");
+      }
+    },
+
+    async checkDuplicated(user) {
+      const response = await fetch("/api/auth/signup/checkDuplicated", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
