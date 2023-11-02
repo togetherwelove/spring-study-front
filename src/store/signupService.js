@@ -5,33 +5,35 @@ export const useSignupStore = defineStore({
   id: "signup",
   state: () => {
     return {
-      user: "",
+      request: "",
       returnUrl: "/",
     };
   },
   actions: {
-    async checkRequired(user) {
-      const response = await fetch("/api/auth/signup/checkRequired", {
+    async signup(request) {
+      const response = await fetch("/api/auth/signup/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
+        body: JSON.stringify(request),
       });
       if (response.status === 200) {
-        alert("checked");
+        const data = await response.json();
+        if (data.code !== "ERROR") {
+          // Request Singup
+          const response = await fetch("/api/auth/signup/request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(request),
+          });
+
+          if (response.status === 200) {
+            const data = await response.json();
+            console.log(data);
+          }
+        } else {
+          console.error(data.message);
+        }
       }
     },
-
-    async checkDuplicated(user) {
-      const response = await fetch("/api/auth/signup/checkDuplicated", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-      });
-      if (response.status === 200) {
-        alert("checked");
-      }
-    },
-
-    async request(user) {},
   },
 });

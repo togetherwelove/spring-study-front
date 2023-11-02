@@ -2,13 +2,13 @@
 import { useSignupStore } from "@/store/signupService";
 import rules from "@/plugins/rules";
 import { ref, reactive, computed, watch } from "vue";
-const useSignupSerivce = useSignupStore();
+const singupService = useSignupStore();
 const loading = ref(false);
 const signupRequest = reactive({
-  name: "",
-  email: "",
-  password: "",
-  passwordVerify: "",
+  name: "dean",
+  email: "user@user.dev",
+  password: "qwer1234",
+  passwordVerify: "qwer1234",
 });
 
 let step = ref(1);
@@ -22,11 +22,11 @@ const title = computed(() => {
   }
 });
 
-const signup = function () {
+async function signup() {
   loading.value = true;
-  // TODO
-  useSignupStore.check(signupRequest);
-};
+  singupService.signup(signupRequest);
+  loading.value = false;
+}
 
 const passwordVerifyRules = computed(() => [
   (value) => {
@@ -34,19 +34,12 @@ const passwordVerifyRules = computed(() => [
     return "비밀번호가 일치하지 않습니다.";
   },
 ]);
-
-let emailVerify = ref(false);
-
-const sendEmail = () => {
-  console.log("send Email");
-  emailVerify.value = true;
-};
 </script>
 
 <template>
   <v-app>
     <div class="d-flex align-center justify-center" style="height: 100%">
-      <v-card class="mx-auto" width="100%" max-width="440">
+      <v-card class="mx-auto" width="100%" max-width="490">
         <v-card-title class="title font-weight-regular d-flex justify-space-between">
           <div>
             <span><strong>회원가입</strong></span>
@@ -57,9 +50,9 @@ const sendEmail = () => {
         <v-window v-model="step">
           <v-window-item :value="1">
             <v-card-text>
-              <v-form validate-on="input lazy">
+              <v-form validate-on="submit" @submit.prevent="signup">
                 <v-text-field density="compact" v-model="signupRequest.name" label="이름" :rules="rules.name"></v-text-field>
-                <v-text-field density="compact" v-model="signupRequest.email" label="이메일" :rules="rules.email" :append-icon="emailVerify ? 'mdi-check' : 'mdi-check-circle'" @click:append="sendEmail"></v-text-field>
+                <v-text-field density="compact" v-model="signupRequest.email" label="이메일(아이디)" :rules="rules.email"></v-text-field>
                 <v-row>
                   <v-col>
                     <v-text-field density="compact" type="password" v-model="signupRequest.password" label="비밀번호" :rules="rules.password" autocomplete="off"></v-text-field>
