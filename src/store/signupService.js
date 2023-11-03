@@ -11,29 +11,38 @@ export const useSignupStore = defineStore({
   },
   actions: {
     async signup(request) {
-      const response = await fetch("/api/auth/signup/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(request),
-      });
-      if (response.status === 200) {
-        const data = await response.json();
-        if (data.code !== "ERROR") {
-          // Request Singup
-          const response = await fetch("/api/auth/signup/request", {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const response = await fetch("/api/auth/signup/check", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(request),
           });
-
           if (response.status === 200) {
             const data = await response.json();
-            console.log(data);
+
+            if (data.code !== "ERROR") {
+              // Request Singup
+              const response = await fetch("/api/auth/signup/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(request),
+              });
+
+              if (response.status === 200) {
+                const data = await response.json();
+                if (data.code !== "ERROR") {
+                  resolve(data);
+                } else {
+                  reject(data.message);
+                }
+              }
+            }
           }
-        } else {
-          console.error(data.message);
+        } catch (error) {
+          reject(error);
         }
-      }
+      });
     },
   },
 });

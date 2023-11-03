@@ -15,6 +15,7 @@ async function login(event) {
   const result = await event;
   const errors = await result.errors;
   if (errors?.length === 0) {
+    console.log("login...");
     authService.login(user);
   }
   loading.value = false;

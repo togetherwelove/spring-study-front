@@ -33,10 +33,10 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
-  if (auth.token === "") {
+  if (!auth.token) {
     await auth.refresh();
   }
-  if (to.meta.authRequired && auth.token === "") {
+  if (to.meta.authRequired && !auth.token) {
     next({ name: "login" });
     return;
   }

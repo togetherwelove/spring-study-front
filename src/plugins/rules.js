@@ -31,15 +31,11 @@ const rules = {
   ],
   name: [
     (value) => {
-      if (value) return true;
-      return "이름을 입력해주세요.";
-    },
-    (value) => {
-      if (value.length >= 2) return true;
+      if (value === "" || value.length >= 2) return true;
       return "이름은 2자 이상입니다.";
     },
     (value) => {
-      if (patterns.name.test(value)) return true;
+      if (value === "" || patterns.name.test(value)) return true;
       return "이름이 유효하지 않습니다.";
     },
   ],
