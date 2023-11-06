@@ -1,39 +1,71 @@
-<script setup>
-import { useAuthStore } from "@/store/authService";
-import rules from "@/plugins/rules";
+<script lang="ts" setup>
+import { useRouter } from "vue-router";
+import { useAuthStore, LoginUser, Response } from "@/store/authService";
 import { ref, reactive } from "vue";
+
 const authService = useAuthStore();
-const user = reactive({
-  email: "user@user.dev",
-  password: "1234",
+const { push } = useRouter();
+
+const user: LoginUser = reactive({
+  email: "",
+  password: "",
 });
 
 const loading = ref(false);
 
-async function login(event) {
+async function login(event: any) {
   loading.value = true;
-  const result = await event;
-  const errors = await result.errors;
+  const results = await event;
+  const errors = await results.errors;
   if (errors?.length === 0) {
-    console.log("login...");
-    authService.login(user);
+    const response: Response = await authService.login(user);
+    if (response.code === "ERROR") {
+      alert(response.message);
+    } else if (response.code === "SUCCESS") {
+      alert("로그인 성공. 홈페이지로 이동합니다.");
+      push({ name: "home" });
+    }
   }
   loading.value = false;
 }
+
+const emailRules = [
+  (value: string) => {
+    if (value) return true;
+    return "email is required.";
+  },
+  (value: string) => {
+    if (/.+@.+\..+/.test(value)) return true;
+    return "email must be valid.";
+  },
+];
 </script>
 
 <template>
-  <div class="d-flex align-center justify-center" style="height: 100%">
-    <v-sheet width="350">
-      <h2>Hello World!</h2>
-      <v-form class="mt-3" validate-on="input" @submit.prevent="login">
-        <v-text-field variant="outlined" v-model="user.email" label="이메일" :rules="rules.email"></v-text-field>
-        <v-text-field class="mt-2" type="password" variant="outlined" v-model="user.password" :rules="rules.password" label="비밀번호" autocomplete="none"></v-text-field>
-        <v-btn class="mt-2" type="submit" :loading="loading" color="primary" block>로그인</v-btn>
-        <p class="mt-2 text-body-2 text-red" v-if="$route.query.error">아이디 혹은 비밀번호가 잘못되었습니다.</p>
+  <div class="d-flex align-center justify-center" style="height: 90vh">
+    <v-sheet width="400" class="mx-auto">
+      <h2>login</h2>
+      <v-form validate-on="submit lazy" @submit.prevent="login">
+        <v-text-field
+          v-model="user.email"
+          label="email"
+          variant="outlined"
+          :rules="emailRules"
+        ></v-text-field>
+        <v-text-field
+          v-model="user.password"
+          label="password"
+          type="password"
+          variant="outlined"
+          :rules="[(v: any) => !!v || 'password is required']"
+        ></v-text-field>
+        <v-btn type="submit" :loading="loading" color="primary">login</v-btn>
       </v-form>
-      <div class="mt-2">
-        <p class="text-body-2">로그인하려면 계정이 필요합니다. <a href="/auth/signup">회원가입</a></p>
+      <div>
+        <p class="text-body-2">
+          dont-have-an-account
+          <router-link to="signup">sign up</router-link>
+        </p>
       </div>
     </v-sheet>
   </div>

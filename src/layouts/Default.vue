@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authService";
@@ -23,7 +23,7 @@ const drawer = ref(false);
         <v-btn @click="logout">logout</v-btn>
       </v-sheet>
       <v-list>
-        <v-list-item v-for="route in routes" :key="route.path" :to="route" density="compact" :title="route.name"> </v-list-item>
+        <v-list-item v-for="route in routes" :key="route.path" :to="route" density="compact" :title="route.name?.toString()"> </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar>

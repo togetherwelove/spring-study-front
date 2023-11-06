@@ -10,14 +10,27 @@
   },
   "dependencies": {
     "@mdi/font": "^7.3.67",
+    "@vue/eslint-config-typescript": "^12.0.0",
     "axios": "^1.6.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-vue": "^9.18.1",
     "pinia": "^2.1.7",
+    "sass": "^1.69.5",
+    "typescript": "^5.2.2",
+    "vite-plugin-vuetify": "^1.0.2",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "vuetify": "^3.3.22"
   },
   "devDependencies": {
+    "@types/node": "^20.8.10",
     "@vitejs/plugin-vue": "^4.2.3",
+    "ts-node": "^10.9.1",
     "vite": "^4.4.5"
-  }
+  },
+  "description": "This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.",
+  "main": ".eslintrc.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

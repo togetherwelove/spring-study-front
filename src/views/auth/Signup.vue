@@ -1,117 +1,108 @@
-<script setup>
-import { useSignupStore } from "@/store/signupService";
-import rules from "@/plugins/rules";
-import { ref, reactive, computed, watch } from "vue";
-const singupService = useSignupStore();
-const loading = ref(false);
-const signupRequest = reactive({
+<script lang="ts" setup>
+import { useSignupStore, SignupUser, Response } from "@/store/AuthService";
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+
+const signupService = useSignupStore();
+const { push } = useRouter();
+
+const user: SignupUser = reactive({
   name: "",
-  email: "user@user.dev",
-  password: "1234qwer",
-  passwordVerify: "1234qwer",
+  email: "",
+  password: "",
+  passwordVerify: "",
 });
 
-let step = ref(1);
+const loading = ref(false);
 
-const title = computed(() => {
-  switch (step.value) {
-    case 1:
-      return "회원가입";
-    case 2:
-      return "홈으로";
-  }
-});
-
-async function signup(event) {
+async function signup(event: any) {
   loading.value = true;
-  try {
-    const result = await event;
-    const errors = await result.errors;
-    if (errors?.length === 0) {
-      console.log("signup...");
-      await singupService.signup(signupRequest);
-      console.log("signup success...");
-      step.value++;
-    } else {
-      console.log("value error...");
-      console.log(errors);
+  const results = await event;
+  const errors = await results.errors;
+  if (errors?.length === 0) {
+    if (await signupService.checkRequired(user)) {
+      alert("required");
+      loading.value = false;
+      return;
     }
-  } catch (error) {
-    console.log("signup error...");
-    console.log(error);
-    alert(error);
-  } finally {
-    loading.value = false;
+    const response: Response = await signupService.requestSignup(user);
+    if (response.code === "ERROR") {
+      alert(response.message);
+      loading.value = false;
+      return;
+    } else {
+      alert("회원가입 완료. 로그인 페이지로 이동합니다.");
+      push({ name: "login" });
+    }
   }
+  loading.value = false;
 }
 
-const passwordVerifyRules = computed(() => [
-  (value) => {
+const emailRules = [
+  (value: string) => {
     if (value) return true;
-    return "비밀번호를 입력해주세요.";
+    return "email is requred.";
   },
-  (value) => {
-    if (value === signupRequest.password) return true;
-    return "비밀번호가 일치하지 않습니다.";
+  (value: string) => {
+    if (/.+@.+\..+/.test(value)) return true;
+    return "email must be valid.";
   },
-]);
+];
 </script>
 
 <template>
-  <v-app>
-    <div class="d-flex align-center justify-center" style="height: 100%">
-      <v-card class="mx-auto" width="100%" max-width="490">
-        <v-card-title class="title font-weight-regular d-flex justify-space-between">
-          <div>
-            <span><strong>회원가입</strong></span>
-            <p class="text-body-2">이미 계정이 있다면 <a href="/auth/login">로그인</a>해주세요.</p>
-          </div>
-        </v-card-title>
-
-        <v-window v-model="step">
-          <v-window-item :value="1">
-            <v-card-text>
-              <v-form validate-on="input lazy" @submit.prevent="signup">
-                <v-text-field density="compact" v-model="signupRequest.email" :rules="rules.email">
-                  <template v-slot:label> <span>이메일</span><span style="color: red">*</span></template>
-                </v-text-field>
-                <v-row>
-                  <v-col>
-                    <v-text-field density="compact" type="password" v-model="signupRequest.password" :rules="rules.password" autocomplete="off">
-                      <template v-slot:label> <span>비밀번호</span><span style="color: red">*</span></template>
-                    </v-text-field>
-                  </v-col>
-                  <v-col>
-                    <v-text-field density="compact" type="password" v-model="signupRequest.passwordVerify" :rules="passwordVerifyRules" autocomplete="off">
-                      <template v-slot:label> <span>비밀번호(확인)</span><span style="color: red">*</span></template>
-                    </v-text-field>
-                  </v-col>
-                </v-row>
-                <v-text-field density="compact" v-model="signupRequest.name" label="이름" :rules="rules.name"></v-text-field>
-                <v-row>
-                  <v-spacer></v-spacer>
-                  <v-col cols="auto">
-                    <v-btn class="mt-2" type="submit" color="primary" :loading="loading">{{ title }}</v-btn>
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-card-text>
-          </v-window-item>
-
-          <v-window-item :value="2">
-            <v-card-text class="text-center">
-              <v-icon icon="mdi-check-circle" color="success" size="128"></v-icon>
-              <h3 class="title font-weight-bold mb-2">회원가입을 축하드립니다.</h3>
-              <v-row>
-                <v-spacer></v-spacer>
-                <v-col cols="auto">
-                  <v-btn class="mt-2" color="primary" :loading="loading">{{ title }}</v-btn>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </div>
-  </v-app>
+  <div class="d-flex align-center justify-center" style="height: 90vh">
+    <v-sheet width="400" class="mx-auto">
+      <h2>sign up</h2>
+      <v-form validate-on="submit lazy" @submit.prevent="signup">
+        <v-text-field
+          v-model="user.name"
+          label="name"
+          variant="outlined"
+          density="compact"
+          :rules="[(v: any) => !!v || 'name is required']"
+        ></v-text-field>
+        <v-text-field
+          v-model="user.email"
+          label="email"
+          variant="outlined"
+          density="compact"
+          :rules="emailRules"
+        ></v-text-field>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="user.password"
+              label="password"
+              type="password"
+              variant="outlined"
+              density="compact"
+              :rules="[(v: any) => !!v || 'password is required']"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field
+              v-model="user.passwordVerify"
+              label="password(verify)"
+              type="password"
+              variant="outlined"
+              density="compact"
+              :rules="[(v: any) => !!v || 'password(verify) is required']"
+              required
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-btn type="submit" color="primary" block :loading="loading"
+          >sign up</v-btn
+        >
+      </v-form>
+      <div>
+        <p class="text-body-2">
+          do-you-already-have-an-account
+          <router-link to="/auth/login">login</router-link>
+        </p>
+      </div>
+    </v-sheet>
+  </div>
 </template>

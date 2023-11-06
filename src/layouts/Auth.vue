@@ -1,3 +1,5 @@
+<script lang="ts" setup></script>
+
 <template>
   <v-app>
     <v-app-bar>
@@ -7,7 +9,9 @@
       <router-view></router-view>
     </v-main>
     <v-footer app>
-      <div>{{ new Date().getFullYear() }} — <strong>Project : Spring Demo</strong></div>
+      <div>
+        {{ new Date().getFullYear() }} — <strong>Project : Spring Demo</strong>
+      </div>
     </v-footer>
   </v-app>
 </template>
