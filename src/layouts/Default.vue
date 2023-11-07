@@ -23,11 +23,18 @@ const drawer = ref(false);
         <v-btn @click="logout">logout</v-btn>
       </v-sheet>
       <v-list>
-        <v-list-item v-for="route in routes" :key="route.path" :to="route" density="compact" :title="route.name?.toString()"> </v-list-item>
+        <v-list-item
+          v-for="route in routes"
+          :key="route.path"
+          :to="route"
+          density="compact"
+          :title="route.name?.toString()"
+        >
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-app-bar>
-      <v-btn color="primary" icon @click.stop="drawer = !drawer"><v-icon>mdi-menu</v-icon></v-btn>
+      <v-btn color="primary" icon @click.stop="drawer = !drawer">menu</v-btn>
       Hello World!
     </v-app-bar>
     <v-main>

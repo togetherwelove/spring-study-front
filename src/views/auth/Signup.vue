@@ -30,8 +30,8 @@ async function signup(event: any) {
       alert(response.message);
       loading.value = false;
       return;
-    } else {
-      alert("회원가입 완료. 로그인 페이지로 이동합니다.");
+    } else if (response.code === "SUCCESS") {
+      alert("signup-success" + "\n" + "redirect to login page");
       push({ name: "login" });
     }
   }

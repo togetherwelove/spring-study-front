@@ -24,11 +24,11 @@ export const useAuthStore = defineStore("auth", () => {
   const currentUser = computed(() => user.value);
   const currentToken = computed(() => token.value);
 
-  async function login(loginUser: LoginUser) {
+  async function login(loginUser: LoginUser): Promise<Response> {
     const response: AxiosResponse = await axios.post(
-      "http://localhost:8080/auth/login",
+      "/api/auth/login",
       { ...loginUser },
-      { headers: { Authorization: "application/json" } }
+      { headers: { "Content-Type": "application/json" } }
     );
     const datas: Response = await response.data;
     if (datas.data.accessToken) {
@@ -39,30 +39,24 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function refresh() {
-    const response = await fetch("http://localhost:8080/auth/refresh", {
+    const response = await fetch("/api/auth/refresh", {
       method: "POST",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
-
     if (response.status === 200) {
-      const responseData: Promise<Response> = await response.json();
-      const datas = (await responseData).data;
+      const responseData: Response = await response.json();
+      const datas = responseData.data;
       if (datas.accessToken) {
         token.value = datas.accessToken;
-      } else if ((await responseData).code === "ERROR") {
-        console.warn(JSON.stringify(await responseData));
+      } else if (responseData.code === "ERROR") {
+        console.warn(responseData.message);
       }
     }
   }
 
   async function logout() {
     const authorizationString = "Bearer " + token.value;
-    await fetch("http://localhost:8080/auth/logout", {
-      method: "POST",
-      credentials: "same-origin",
+    await fetch("/api/auth/logout", {
       headers: {
         "Content-Type": "application/json",
         Authorization: authorizationString,
@@ -94,9 +88,9 @@ export interface SignupUser {
 export const useSignupStore = defineStore("signup", () => {
   async function checkRequired(user: SignupUser): Promise<boolean> {
     const response: AxiosResponse = await axios.post(
-      "http://localhost:8080/auth/signup/check",
+      "/api/auth/signup/check",
       { ...user },
-      { headers: { Authorization: "application/json" } }
+      { headers: { "Content-Type": "application/json" } }
     );
     let checkedRequired = false;
     if ((response.data?.code ?? "ERROR") === "ERROR") {
@@ -107,9 +101,9 @@ export const useSignupStore = defineStore("signup", () => {
 
   async function requestSignup(user: SignupUser): Promise<Response> {
     const response: AxiosResponse = await axios.post(
-      "http://localhost:8080/auth/signup/request",
+      "/api/auth/signup/request",
       { ...user },
-      { headers: { Authorization: "application/json" } }
+      { headers: { "Content-Type": "application/json" } }
     );
     return Promise.resolve(response.data);
   }

@@ -22,7 +22,7 @@ async function login(event: any) {
     if (response.code === "ERROR") {
       alert(response.message);
     } else if (response.code === "SUCCESS") {
-      alert("로그인 성공. 홈페이지로 이동합니다.");
+      alert("login-success" + "\n" + "redirect to home page");
       push({ name: "home" });
     }
   }
@@ -50,6 +50,7 @@ const emailRules = [
           v-model="user.email"
           label="email"
           variant="outlined"
+          density="compact"
           :rules="emailRules"
         ></v-text-field>
         <v-text-field
@@ -57,9 +58,12 @@ const emailRules = [
           label="password"
           type="password"
           variant="outlined"
+          density="compact"
           :rules="[(v: any) => !!v || 'password is required']"
         ></v-text-field>
-        <v-btn type="submit" :loading="loading" color="primary">login</v-btn>
+        <v-btn type="submit" :loading="loading" color="primary" block
+          >login</v-btn
+        >
       </v-form>
       <div>
         <p class="text-body-2">

@@ -58,6 +58,7 @@ router.beforeEach(async (to, from, next) => {
   }
   if (to.meta.authRequired && auth.currentToken === "") {
     next({ name: "login" });
+    return;
   }
   next();
 });
