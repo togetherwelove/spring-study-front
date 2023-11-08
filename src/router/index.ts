@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, Router } from "vue-router";
 import Default from "../layouts/Default.vue";
 import Auth from "../layouts/Auth.vue";
-import { useAuthStore } from "@/store/AuthService";
+import { useAuthStore } from "@/stores/AuthService";
 
 const routes = [
   { path: "", redirect: "/home" },

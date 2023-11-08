@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "@/store/authService";
+import { useAuthStore } from "@/stores/authService";
 const routes = useRouter()
   .getRoutes()
   .filter((r) => r.name === "default")[0]?.children;
@@ -34,8 +34,10 @@ const drawer = ref(false);
       </v-list>
     </v-navigation-drawer>
     <v-app-bar>
-      <v-btn color="primary" icon @click.stop="drawer = !drawer">menu</v-btn>
-      Hello World!
+      <v-btn color="primary" icon @click.stop="drawer = !drawer">
+        <v-icon icon="mdi-home" />
+      </v-btn>
+      <p>Hello World!</p>
     </v-app-bar>
     <v-main>
       <router-view class="ma-5"></router-view>

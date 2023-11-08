@@ -1,7 +1,8 @@
 import { ref, Ref, computed } from "vue";
 import router from "@/router";
 import { defineStore } from "pinia";
-import axios, { AxiosResponse } from "axios";
+import instance from "@/utils/axios-interceptor";
+import { AxiosResponse } from "axios";
 
 export interface LoginUser {
   email: string;
@@ -25,11 +26,9 @@ export const useAuthStore = defineStore("auth", () => {
   const currentToken = computed(() => token.value);
 
   async function login(loginUser: LoginUser): Promise<Response> {
-    const response: AxiosResponse = await axios.post(
-      "/api/auth/login",
-      { ...loginUser },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response: AxiosResponse = await instance.post("/auth/login", {
+      ...loginUser,
+    });
     const datas: Response = await response.data;
     if (datas.data.accessToken) {
       token.value = datas.data.accessToken;
@@ -39,29 +38,20 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function refresh() {
-    const response = await fetch("/api/auth/refresh", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (response.status === 200) {
-      const responseData: Response = await response.json();
-      const datas = responseData.data;
-      if (datas.accessToken) {
-        token.value = datas.accessToken;
-      } else if (responseData.code === "ERROR") {
-        console.warn(responseData.message);
-      }
+    const response: AxiosResponse = await instance.post("/auth/refresh");
+    const responseData: Response = await response.data;
+    const data = responseData.data;
+    if (data.accessToken) {
+      token.value = await data.accessToken;
+    } else if (responseData.code === "ERROR") {
+      console.warn(responseData.message);
     }
   }
 
   async function logout() {
-    const authorizationString = "Bearer " + token.value;
-    await fetch("/api/auth/logout", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: authorizationString,
-      },
-    });
+    const response: AxiosResponse = await instance.post("/auth/logout");
+    // TODO
+    console.log(response);
     token.value = "";
     user.value = "";
     await router.push("/auth/login");
@@ -87,23 +77,19 @@ export interface SignupUser {
 
 export const useSignupStore = defineStore("signup", () => {
   async function checkRequired(user: SignupUser): Promise<boolean> {
-    const response: AxiosResponse = await axios.post(
-      "/api/auth/signup/check",
-      { ...user },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response: AxiosResponse = await instance.post("/auth/signup/check", {
+      ...user,
+    });
     let checkedRequired = false;
-    if ((response.data?.code ?? "ERROR") === "ERROR") {
-      checkedRequired = true;
-    }
+    console.log(response);
+    // TODO
     return Promise.resolve(checkedRequired);
   }
 
   async function requestSignup(user: SignupUser): Promise<Response> {
-    const response: AxiosResponse = await axios.post(
-      "/api/auth/signup/request",
-      { ...user },
-      { headers: { "Content-Type": "application/json" } }
+    const response: AxiosResponse = await instance.post(
+      "/auth/signup/request",
+      { ...user }
     );
     return Promise.resolve(response.data);
   }

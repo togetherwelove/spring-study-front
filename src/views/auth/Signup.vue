@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useSignupStore, SignupUser, Response } from "@/store/AuthService";
+import { useSignupStore, SignupUser, Response } from "@/stores/AuthService";
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 
