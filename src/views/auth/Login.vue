@@ -7,8 +7,8 @@ const authService = useAuthStore();
 const { push } = useRouter();
 
 const user: LoginUser = reactive({
-  email: "",
-  password: "",
+  email: "user@user.dev",
+  password: "1234qwer",
 });
 
 const loading = ref(false);
@@ -22,7 +22,6 @@ async function login(event: any) {
     if (response.code === "ERROR") {
       alert(response.message);
     } else if (response.code === "SUCCESS") {
-      alert("login-success" + "\n" + "redirect to home page");
       push({ name: "home" });
     }
   }
@@ -49,6 +48,7 @@ const emailRules = [
         <v-text-field
           v-model="user.email"
           label="email"
+          autocomplete="username"
           variant="outlined"
           density="compact"
           :rules="emailRules"
@@ -57,6 +57,7 @@ const emailRules = [
           v-model="user.password"
           label="password"
           type="password"
+          autocomplete="current-password"
           variant="outlined"
           density="compact"
           :rules="[(v: any) => !!v || 'password is required']"

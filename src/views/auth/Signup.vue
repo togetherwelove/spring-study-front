@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useSignupStore, SignupUser, Response } from "@/stores/AuthService";
+import { log } from "console";
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 
@@ -7,10 +8,10 @@ const signupService = useSignupStore();
 const { push } = useRouter();
 
 const user: SignupUser = reactive({
-  name: "",
-  email: "",
-  password: "",
-  passwordVerify: "",
+  name: "dean",
+  email: "user@user.dev",
+  password: "1234qwer",
+  passwordVerify: "1234qwer",
 });
 
 const loading = ref(false);
@@ -31,7 +32,7 @@ async function signup(event: any) {
       loading.value = false;
       return;
     } else if (response.code === "SUCCESS") {
-      alert("signup-success" + "\n" + "redirect to login page");
+      alert("회원가입 성공 로그인 페이지로 이동합니다.");
       push({ name: "login" });
     }
   }
@@ -65,6 +66,7 @@ const emailRules = [
         <v-text-field
           v-model="user.email"
           label="email"
+          autocomplete="username"
           variant="outlined"
           density="compact"
           :rules="emailRules"
@@ -75,6 +77,7 @@ const emailRules = [
               v-model="user.password"
               label="password"
               type="password"
+              autocomplete="new-password"
               variant="outlined"
               density="compact"
               :rules="[(v: any) => !!v || 'password is required']"
@@ -86,6 +89,7 @@ const emailRules = [
               v-model="user.passwordVerify"
               label="password(verify)"
               type="password"
+              autocomplete="new-password"
               variant="outlined"
               density="compact"
               :rules="[(v: any) => !!v || 'password(verify) is required']"

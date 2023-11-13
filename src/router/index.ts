@@ -22,6 +22,12 @@ const routes = [
         component: () => import("@/views/About.vue"),
         meta: { authRequired: true },
       },
+      {
+        name: "post",
+        path: "/post",
+        component: () => import("@/views/post/Post.vue"),
+        meta: { authRequired: true },
+      },
     ],
     meta: { authRequired: true },
   },

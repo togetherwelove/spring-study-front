@@ -50,8 +50,6 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function logout() {
     const response: AxiosResponse = await instance.post("/auth/logout");
-    // TODO
-    console.log(response);
     token.value = "";
     user.value = "";
     await router.push("/auth/login");
@@ -81,8 +79,6 @@ export const useSignupStore = defineStore("signup", () => {
       ...user,
     });
     let checkedRequired = false;
-    console.log(response);
-    // TODO
     return Promise.resolve(checkedRequired);
   }
 
