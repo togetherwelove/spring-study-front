@@ -50,8 +50,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function logout() {
-    refresh();
-    const response: AxiosResponse = await instance.post("/auth/logout");
+    await instance.post("/auth/logout");
     token.value = "";
     user.value = "";
     await router.push("/auth/login");
