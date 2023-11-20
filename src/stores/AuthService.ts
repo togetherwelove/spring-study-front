@@ -41,6 +41,7 @@ export const useAuthStore = defineStore("auth", () => {
     const response: AxiosResponse = await instance.post("/auth/refresh");
     const responseData: Response = await response.data;
     const data = responseData.data;
+
     if (data.accessToken) {
       token.value = await data.accessToken;
     } else if (responseData.code === "ERROR") {
@@ -49,9 +50,8 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function logout() {
+    refresh();
     const response: AxiosResponse = await instance.post("/auth/logout");
-    // TODO
-    console.log(response);
     token.value = "";
     user.value = "";
     await router.push("/auth/login");

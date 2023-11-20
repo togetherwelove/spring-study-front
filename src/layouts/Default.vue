@@ -9,7 +9,6 @@ const routes = useRouter()
 const authStore = useAuthStore();
 
 const logout = () => {
-  console.log("logout...");
   authStore.logout();
 };
 
@@ -35,7 +34,7 @@ const drawer = ref(false);
     </v-navigation-drawer>
     <v-app-bar>
       <v-btn color="primary" icon @click.stop="drawer = !drawer">
-        <v-icon icon="mdi-home" />
+        <v-icon icon="mdi-menu" />
       </v-btn>
       <p>Hello World!</p>
     </v-app-bar>
