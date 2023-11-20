@@ -81,8 +81,6 @@ export const useSignupStore = defineStore("signup", () => {
       ...user,
     });
     let checkedRequired = false;
-    console.log(response);
-    // TODO
     return Promise.resolve(checkedRequired);
   }
 

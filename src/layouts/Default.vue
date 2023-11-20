@@ -19,7 +19,7 @@ const drawer = ref(false);
   <v-app>
     <v-navigation-drawer v-model="drawer" width="175">
       <v-sheet class="ma-3">
-        <v-btn @click="logout">logout</v-btn>
+        <v-btn size="small" @click="logout">logout</v-btn>
       </v-sheet>
       <v-list>
         <v-list-item
@@ -32,12 +32,14 @@ const drawer = ref(false);
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+
     <v-app-bar>
       <v-btn color="primary" icon @click.stop="drawer = !drawer">
         <v-icon icon="mdi-menu" />
       </v-btn>
-      <p>Hello World!</p>
+      <p class="text-capitalize">{{ $route.name }}</p>
     </v-app-bar>
+
     <v-main>
       <router-view class="ma-5"></router-view>
     </v-main>
