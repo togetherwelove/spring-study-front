@@ -29,7 +29,7 @@ export const useAuthStore = defineStore("auth", () => {
     const response: AxiosResponse = await instance.post("/auth/login", {
       ...loginUser,
     });
-    const datas: Response = await response.data;
+    const datas: Response = response.data;
     if (datas.data.accessToken) {
       token.value = datas.data.accessToken;
       router.push(returnURL.value ?? "/");
@@ -39,11 +39,11 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function refresh() {
     const response: AxiosResponse = await instance.post("/auth/refresh");
-    const responseData: Response = await response.data;
+    const responseData: Response = response.data;
     const data = responseData.data;
 
     if (data.accessToken) {
-      token.value = await data.accessToken;
+      token.value = data.accessToken;
     } else if (responseData.code === "ERROR") {
       console.warn(responseData.message);
     }
@@ -55,6 +55,7 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = "";
     await router.push("/auth/login");
   }
+
   return {
     user,
     token,
@@ -79,7 +80,13 @@ export const useSignupStore = defineStore("signup", () => {
     const response: AxiosResponse = await instance.post("/auth/signup/check", {
       ...user,
     });
-    let checkedRequired = false;
+
+    let checkedRequired = true;
+
+    if ((response.data?.code ?? "ERROR") === "ERROR") {
+      checkedRequired = false;
+    }
+
     return Promise.resolve(checkedRequired);
   }
 

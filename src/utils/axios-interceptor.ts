@@ -9,9 +9,8 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const auth = useAuthStore();
-    const accessToken: string = auth.currentToken;
     config.headers["Content-Type"] = "application/json";
-    config.headers["Authorization"] = `Bearer ${accessToken}`;
+    config.headers["Authorization"] = `Bearer ${auth.currentToken}`;
     return config;
   },
   (error) => {

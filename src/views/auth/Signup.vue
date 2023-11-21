@@ -20,7 +20,7 @@ async function signup(event: any) {
   const results = await event;
   const errors = await results.errors;
   if (errors?.length === 0) {
-    if (await signupService.checkRequired(user)) {
+    if (!(await signupService.checkRequired(user))) {
       alert("required");
       loading.value = false;
       return;
