@@ -22,8 +22,8 @@ export const useAuthStore = defineStore("auth", () => {
   const token: Ref<string> = ref("");
   const returnURL: Ref<string> = ref("/");
 
-  const currentUser = computed(() => user.value);
-  const currentToken = computed(() => token.value);
+  const getUser = computed(() => user.value);
+  const getToken = computed(() => token.value);
 
   async function login(loginUser: LoginUser): Promise<Response> {
     const response: AxiosResponse = await instance.post("/auth/login", {
@@ -60,8 +60,8 @@ export const useAuthStore = defineStore("auth", () => {
     user,
     token,
     returnURL,
-    currentUser,
-    currentToken,
+    getUser,
+    getToken,
     login,
     refresh,
     logout,

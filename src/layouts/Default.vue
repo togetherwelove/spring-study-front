@@ -3,8 +3,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authService";
 
-const { go } = useRouter();
-
 const routes = useRouter()
   .getRoutes()
   .filter((r) => r.name === "default")[0]?.children;
@@ -12,7 +10,6 @@ const routes = useRouter()
 const authStore = useAuthStore();
 
 async function logout() {
-  await go(0);
   authStore.logout();
 }
 

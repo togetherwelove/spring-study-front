@@ -10,7 +10,7 @@ instance.interceptors.request.use(
   (config) => {
     const auth = useAuthStore();
     config.headers["Content-Type"] = "application/json";
-    config.headers["Authorization"] = `Bearer ${auth.currentToken}`;
+    config.headers["Authorization"] = `Bearer ${auth.getToken}`;
     return config;
   },
   (error) => {
